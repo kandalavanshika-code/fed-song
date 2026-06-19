@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar/Navbar';
 import SongListItem from '../components/MusicCard/SongListItem';
 import { usePlayer } from '../context/PlayerContext';
 import { deezerApi } from '../services/deezerApi';
+import { defaultPlaylists } from '../data/defaultData';
 
 export default function PlaylistDetail() {
   const { id } = useParams();
@@ -19,6 +20,15 @@ export default function PlaylistDetail() {
     async function loadPlaylist() {
       setIsLoading(true);
       setError(null);
+      
+      // Check if it's one of our fallback default playlists first
+      const defaultMatch = defaultPlaylists.find(p => p.id === id);
+      if (defaultMatch) {
+        setPlaylist(defaultMatch);
+        setIsLoading(false);
+        return;
+      }
+      
       try {
         const data = await deezerApi.getPlaylist(id);
         setPlaylist(data);

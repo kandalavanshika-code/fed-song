@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
+import { defaultTracks } from '../data/defaultData';
 
 const PlayerContext = createContext();
 
@@ -19,12 +20,12 @@ export function PlayerProvider({ children }) {
   // Persistent States
   const [likedSongs, setLikedSongs] = useState(() => {
     const saved = localStorage.getItem('neonbeats_liked');
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved) : [defaultTracks[0], defaultTracks[2], defaultTracks[4]];
   });
 
   const [recentlyPlayed, setRecentlyPlayed] = useState(() => {
     const saved = localStorage.getItem('neonbeats_recent');
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved) : defaultTracks;
   });
 
   const [searchHistory, setSearchHistory] = useState(() => {

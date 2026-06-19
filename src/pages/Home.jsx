@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar/Navbar';
 import MusicCard from '../components/MusicCard/MusicCard';
 import { usePlayer } from '../context/PlayerContext';
 import { deezerApi } from '../services/deezerApi';
+import { defaultTracks, defaultPlaylists } from '../data/defaultData';
 
 export default function Home() {
   const { playSong, currentSong, isPlaying, recentlyPlayed } = usePlayer();
@@ -18,12 +19,16 @@ export default function Home() {
     async function loadCharts() {
       try {
         const data = await deezerApi.getCharts();
+        const apiTracks = data.tracks?.data || [];
+        const apiPlaylists = data.playlists?.data || [];
+        
         setCharts({
-          tracks: data.tracks?.data || [],
-          playlists: data.playlists?.data || []
+          tracks: apiTracks.length > 0 ? apiTracks : defaultTracks,
+          playlists: apiPlaylists.length > 0 ? apiPlaylists : defaultPlaylists
         });
       } catch (error) {
-        console.error("Failed to load charts", error);
+        console.error("Failed to load charts, using defaults", error);
+        setCharts({ tracks: defaultTracks, playlists: defaultPlaylists });
       } finally {
         setIsLoading(false);
       }

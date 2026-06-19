@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar/Navbar';
 import MusicCard from '../components/MusicCard/MusicCard';
 import { deezerApi } from '../services/deezerApi';
+import { defaultPlaylists } from '../data/defaultData';
 
 export default function Playlists() {
   const navigate = useNavigate();
@@ -15,9 +16,11 @@ export default function Playlists() {
     async function loadPlaylists() {
       try {
         const data = await deezerApi.getCharts();
-        setPlaylists(data.playlists?.data || []);
+        const apiPlaylists = data.playlists?.data || [];
+        setPlaylists(apiPlaylists.length > 0 ? apiPlaylists : defaultPlaylists);
       } catch (error) {
-        console.error("Failed to load playlists", error);
+        console.error("Failed to load playlists, using defaults", error);
+        setPlaylists(defaultPlaylists);
       } finally {
         setIsLoading(false);
       }
@@ -56,7 +59,7 @@ export default function Playlists() {
       <Navbar title="Your Playlists" />
       
       <div className="px-4 md:px-8">
-        <h1 className="text-3xl font-bold mb-8 text-white">Deezer Top Playlists</h1>
+        <h1 className="text-3xl font-bold mb-8 text-white">All Playlists</h1>
         
         <motion.div 
           variants={containerVariants}
@@ -69,7 +72,7 @@ export default function Playlists() {
               <MusicCard 
                 song={{
                   title: playlist.title,
-                  subtitle: "By Deezer",
+                  subtitle: "Playlist",
                   cover: playlist.picture_medium || playlist.picture
                 }}
                 onClick={() => navigate(`/playlist/${playlist.id}`)}
